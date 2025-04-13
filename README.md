@@ -31,6 +31,72 @@ More [here](wrangler-docs/upcoming-features.md) on upcoming features.
   * A new capability that allows CDAP Administrators to **restrict the directives** that are accessible to their users.
 More information on configuring can be found [here](wrangler-docs/exclusion-and-aliasing.md)
 
+
+  * **Support for BYTE_SIZE and TIME_DURATION Parsers**
+  
+    Wrangler now supports two new token types for interpreting units of data and time within recipes. These make it much easier to aggregate and manipulate size and duration values in a natural way.
+
+    #### BYTE_SIZE Token
+    Supports values like:
+    - `512B`
+    - `1KB`, `10KB`
+    - `1.5MB`, `10MB`
+    - `2GB`, `1TB`
+    
+    These are internally converted to bytes for accurate numeric operations. Parsing is case-insensitive and flexible.
+
+    #### TIME_DURATION Token
+    Supports values like:
+    - `150ms`
+    - `2s` (seconds)
+    - `3m` (minutes)
+    - `1.5h` (hours)
+    
+    These values are converted internally to milliseconds.
+
+    ---
+
+    ### 🆕 New Directive: `aggregate-stats`
+    A new directive that utilizes these new token types for aggregations.
+
+    #### Syntax:
+    ```
+    aggregate-stats :<sourceByteColumn> :<sourceTimeColumn> <targetByteColumn> <targetTimeColumn>
+    ```
+
+    #### Arguments:
+    | Argument           | Description                                      |
+    |--------------------|--------------------------------------------------|
+    | `sourceByteColumn` | Column containing byte size values (e.g., "1MB") |
+    | `sourceTimeColumn` | Column containing duration values (e.g., "2s")   |
+    | `targetByteColumn` | Output column for total size (e.g., in MB)       |
+    | `targetTimeColumn` | Output column for total time (e.g., in seconds)  |
+
+    #### Example Recipe:
+    ```wrangler
+    aggregate-stats :data_transfer_size :response_time total_size_mb total_time_sec
+    ```
+
+    This directive:
+    - Sums all byte-size values (e.g., "1MB", "512KB") → converts to bytes → total in MB.
+    - Sums all duration values (e.g., "1s", "500ms") → converts to milliseconds → total in seconds.
+
+    **Unit Conversion Constants:**
+    - `1 MB = 1024 * 1024 bytes`
+    - `1 second = 1000 milliseconds`
+
+    The result is a single output row with the final calculated totals, e.g.:
+
+    ```json
+    {
+      "total_size_mb": 1.5,
+      "total_time_sec": 1.5
+    }
+    ```
+
+    This makes it easy to perform fast aggregations for performance, throughput, or monitoring metrics directly in Wrangler recipes.
+
+
 ## Demo Videos and Recipes
 
 Videos and Screencasts are best way to learn, so we have compiled simple, short screencasts that shows some of the features of Data Prep. Additional videos can be found [here](https://www.youtube.com/playlist?list=PLhmsf-NvXKJn-neqefOrcl4n7zU4TWmIr)
@@ -47,7 +113,7 @@ Videos and Screencasts are best way to learn, so we have compiled simple, short 
   * [SCREENCAST] [Data Cleansing capability with send-to-error directive](https://www.youtube.com/watch?v=aZd5H8hIjDc)
   * [SCREENCAST] [Building Data Prep from the GitHub source](https://youtu.be/pGGjKU04Y38)
   * [VOICE-OVER] [End-to-End Demo Video](https://youtu.be/AnhF0qRmn24)
-  * [SCREENCAST] [Ingesting into Kudu](https://www.youtube.com/watch?v=KBW7a38vlUM)
+  * [SCREENCAST] [Ingesting into Kudu](https://www.youtube.com/watch? v=KBW7a38vlUM)
   * [SCREENCAST] [Realtime HL7 CCDA XML from Kafka into Time Parititioned Parquet](https://youtu.be/0fqNmnOnD-0)
   * [SCREENCAST] [Parsing JSON file](https://youtu.be/vwnctcGDflE)
   * [SCREENCAST] [Flattening arrays](https://youtu.be/SemHxgBYIsY)
