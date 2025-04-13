@@ -121,6 +121,9 @@ public interface Directive extends Executor<List<Row>, List<Row>>, EntityMetrics
    * returned and used in the metrics emission logic elsewhere.
    * @return List of metrics ({@link EntityCountMetric}s) emitted by this directive
    */
+
+   void initialize(Arguments arguments) throws DirectiveParseException;
+   List<Row> execute(List<Row> rows, ExecutorContext context) throws DirectiveExecutionException;
   @Override
   default List<EntityCountMetric> getCountMetrics() {
     // no op

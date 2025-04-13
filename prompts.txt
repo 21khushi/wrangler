@@ -1,0 +1,12 @@
+# AI Prompts Used for Wrangler Assignment
+
+Prompt 1: Generate ByteSize.java that implements Token and parses "10KB", "1.5MB", etc.
+Prompt 2: Generate TimeDuration.java that converts "5ms", "2.5s", "1h" into milliseconds.
+Prompt 3: Help modify Directives.g4 grammar to add BYTE_SIZE and TIME_DURATION rules.
+Prompt 4: Where should tokenGroup.add() be used in RecipeVisitor?
+Prompt 5: Generate RecipeVisitor method for visitByteSizeArg using builder.addToken.
+Prompt 6: Step-by-step breakdown for core parser update and integration.
+Prompt 7: How to write unit tests for ByteSize and TimeDuration parsing classes.
+Prompt 8: Generate example input data and test case for aggregate-stats directive.
+Prompt 9: Explain how to use TestingRig to run recipes in test cases.
+Prompt 10: Full walkthrough of the Wrangler assignment steps for implementation and submission.

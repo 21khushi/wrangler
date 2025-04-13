@@ -27,7 +27,7 @@ import java.util.List;
 @PublicEvolving
 public interface Statistics {
   /**
-   * Aggregates statistics for all the rows.
+   * s statistics for all the rows.
    *
    * @param rows to be aggregated.
    * @return Summary in the form of {@link Row}

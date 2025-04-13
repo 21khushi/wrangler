@@ -36,9 +36,7 @@ options {
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-}
-
-/**
+}/**
  * Parser Grammar for recognizing tokens and constructs of the directives language.
  */
 recipe
@@ -62,9 +60,13 @@ directive
     | numberList
     | boolList
     | stringList
+    | BYTE_SIZE
+    | TIME_DURATION
     | numberRanges
     | properties
-  )*?
+    | byteSizeArg           // ✅ Added parser rule
+    | timeDurationArg       // ✅ Added parser rule
+  )+
   ;
 
 ifStatement
@@ -92,7 +94,7 @@ forStatement
  ;
 
 macro
- : Dollar OBrace (~OBrace | macro | Macro)*? CBrace
+ : Dollar OBrace (~OBrace | macro | Macro)+ CBrace
  ;
 
 pragma
@@ -140,7 +142,12 @@ numberRange
  ;
 
 value
- : String | Number | Column | Bool
+ : String
+ | Number
+ | Column
+ | Bool
+ | BYTE_SIZE          // ✅ Added support to value rule
+ | TIME_DURATION      // ✅ Added support to value rule
  ;
 
 ecommand
@@ -196,6 +203,15 @@ identifierList
  ;
 
 
+// ✅ NEW: Parser rules for BYTE_SIZE and TIME_DURATION
+byteSizeArg
+  : BYTE_SIZE
+  ;
+
+timeDurationArg
+  : TIME_DURATION
+  ;
+
 /*
  * Following are the Lexer Rules used for tokenizing the recipe.
  */
@@ -215,7 +231,7 @@ StartsWith : '=^';
 NotStartsWith : '!^';
 EndsWith : '=$';
 NotEndsWith : '!$';
-PlusEqual : '+=';
+PlusEqual : '+=' ;
 SubEqual : '-=';
 MulEqual : '*=';
 DivEqual : '/=';
@@ -311,3 +327,25 @@ fragment Int
 fragment Digit
  : [0-9]
  ;
+
+
+// ✅ Lexer Rules for ByteSize and TimeDuration
+BYTE_SIZE
+  : Digit+ ('.' Digit+)? BYTE_UNIT
+  ;
+
+TIME_DURATION
+  : Digit+ ('.' Digit+)? TIME_UNIT
+  ;
+
+fragment BYTE_UNIT
+  : [kKmMgGtTpPeE]? [bB]
+  ;
+
+fragment TIME_UNIT
+  : 'ms'
+  | 's'
+  | 'm'
+  | 'h'
+  | 'd'
+  ;
